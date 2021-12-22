@@ -2,44 +2,43 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+//в классе gamepanel происходит формирование общего изображения
+//где мы формируем в виртуальном окне общую картинку всех элементов.
 
 public class gamepanel extends JPanel implements Runnable
 {
     //Field
-    public static  int Width = 1024;//static для доступа в другие классы
+    // задаём размер панели
+    public static  int Width = 1024;//static для доступа в другие ;классы к статическому полю можно обращаться не создавая экземпляр класса
     public static  int Height = 600;
 
-    public static int mouseX;
-    public static int mouseY;
+    public static int mouseX;// координаты мышки
+    public static int mouseY;// координаты мышки
     public static boolean leftMouse;
     pravmenue button4 = new pravmenue(800,20,140,40,"C:/Users/user/IdeaProjects/Game1/res/but3.png","Назад");
     public static boolean buttmenue = true; //главная страница меню
     public static boolean pravmenue = false; // страница меню правил
 
-    private Thread thread;
+    private Thread thread;// Создаем поток- ссылка на обьект класса Thread
 
-    private BufferedImage image;
+    private BufferedImage image;// ссылка на обьект класса
     private Graphics2D g;
 
-    private int FPS;
-    private double millisToFps;
-    private long timerFPS;
-    private int sleepTime;
+    private int FPS;//
+    private double millisToFps;// fps в миллсек
+    private long timerFPS;// таймер fps
+    private int sleepTime; //сколько он будет спать
 
-    public static enum STATES
-    {
-        MENUE,
-        PLAY
-    }
-    public static STATES state = STATES.MENUE;
+    public static   enum STATES{MENUE,PLAY} //обьявляем перечсления
+    public static STATES state = STATES.MENUE;// переменная меню
 
-    public static GameBack background;
-    public static Player player;
+    public static GameBack background;// ссылка на обьект класса
+    public static Player player;// ссылка на обьект класса
     public static ArrayList<Bullet> bullets;
     public static ArrayList<Enemy> enemies;
-    public static Wave wave;
-    public static Menue menue;
-    public static Aim aim1;
+    public static Wave wave;// ссылка на обьект класса
+    public static Menue menue;// ссылка на обьект класса
+    public static Aim aim1;// ссылка на обьект класса
     public static Audio a_bul;//звук выстрела
     public static Audio a_enem;//звук смерти врага
     public static Audio a_reload1;//перезарядка
@@ -49,26 +48,27 @@ public class gamepanel extends JPanel implements Runnable
     //constructor
     public gamepanel()//выход конструктора Jpanel
     {
-        super();
+        super();// активируем консруктор родителя
 
-        setPreferredSize(new Dimension(Width, Height));
-        setFocusable(true);
-        requestFocus();
-        addKeyListener(new Listeners());
-        addMouseMotionListener(new Listeners());
-        addMouseListener(new Listeners());
+        setPreferredSize(new Dimension(Width, Height));// размер передаем в обьект класса Измерения
+        setFocusable(true);//передаем фокус
+        requestFocus();// акивируем
+        addKeyListener(new Listeners());// добавляем обработчик событий клик мышь
+        addMouseMotionListener(new Listeners());// добавляем обработчик событий клаава
+        addMouseListener(new Listeners());//добавляем обработчик событий перем мышь
 
     }
     //Functions
     public void start()
     {
         Thread thread = new Thread(this);
-        thread.start();
+        thread.start();// запускаем поток
     }
+    //метод от интерфейса Runnable (потока)
     public void run()
     {
-        FPS = 30;
-        millisToFps = 1000/FPS;
+        FPS = 30;// задаем желаемый FPS
+        millisToFps = 1000/FPS;//пересчет в миллисек
         sleepTime = 0;
 
         image = new BufferedImage(Width, Height, BufferedImage.TYPE_INT_RGB);
@@ -101,12 +101,12 @@ public class gamepanel extends JPanel implements Runnable
         {
             timerFPS = System.nanoTime();
             aim1.update();
-            if(state.equals(STATES.MENUE))
+            if(state.equals(STATES.MENUE))// если пер state == MENUE
             {this.setCursor(mainCursor);//активировать игровой курсор
                 if (buttmenue)
                 {
-                    background.draw(g);
-                    menue.draw(g);
+                    background.draw(g);// рисуем фон
+                    menue.draw(g);// рисуем меню
                     menue.moveButt(menue.button1);
                     menue.moveButt(menue.button2);
                     menue.moveButt(menue.button3);
@@ -122,16 +122,16 @@ public class gamepanel extends JPanel implements Runnable
                 background.update();
                 gameDraw();
             }
-            if(state.equals(STATES.PLAY))
+            if(state.equals(STATES.PLAY))// игра
             {
-                gameUpdate();//с каждым проходом цикла обновление картинки
-                gameRender();
-                gameDraw();
+                gameUpdate(); //обновление
+                gameRender(); //перерисовка
+                gameDraw(); ////перенос изображения на панель
             }
 
 
 
-            timerFPS = (System.nanoTime() - timerFPS)/1000000;
+            timerFPS = (System.nanoTime() - timerFPS)/1000000;//сколько прошло миллсек на операции выше
             if(millisToFps > timerFPS)   //чтоб не уйти в минус
             {
                 sleepTime = (int)(millisToFps - timerFPS);
@@ -140,12 +140,12 @@ public class gamepanel extends JPanel implements Runnable
             try {
                 Thread.sleep(sleepTime); // независимо от цикла полуячаем 30 фпс
 
-            } catch (InterruptedException e)
+            } catch (InterruptedException e)//если не удается заснуть- исключение
             {
                 e.printStackTrace();
             }
-            timerFPS = 0;
-            sleepTime = 1;
+            timerFPS = 0;// обнуляем таймер
+            sleepTime = 1;// обновляем время сна
         }
 
 
@@ -163,7 +163,7 @@ public class gamepanel extends JPanel implements Runnable
                     {  //клик ЛКМ
                         gamepanel.pravmenue = false;
                         gamepanel.buttmenue = true;
-                        gamepanel.state = STATES.MENUE; //переход в игру
+                        gamepanel.state = STATES.MENUE; //переход в меню
                     }
                 }
             } else{
@@ -189,43 +189,43 @@ public class gamepanel extends JPanel implements Runnable
         //Bullets update
         for(int i=0;i < bullets.size(); i++)
         {
-            bullets.get(i).update();
-            boolean remove = bullets.get(i).remove();
-            if(remove)
+            bullets.get(i).update();// обновлям текущую пулю
+            boolean remove = bullets.get(i).remove();//текущую пулю проверяем где она
+            if(remove) // если правдиво(улетела)
             {
-              bullets.remove(i);
+              bullets.remove(i);//удаляем пулю которая вылетела
               i--;
             }
         }
         //enemies Update
         for(int i = 0; i < enemies.size(); i ++)
         {
-            enemies.get(i).update();
-
+            enemies.get(i).update();// обновлям текущего врага
         }
 
         //bullets-enemies Collide
-        for(int i = 0;i < enemies.size();i++)
+        for(int i = 0;i < enemies.size();i++)// каждого врвга из списка
         {
-            Enemy e = enemies.get(i);
-            double ex = e.getX();
+            Enemy e = enemies.get(i);// выделяем элемент списка
+            double ex = e.getX();// получаем коорд элемента
             double ey = e.getY();
             double eh = e.getH();
             double ew = e.getW();
             for(int j = 0;j < bullets.size();j++)
             {
-                Bullet b = bullets.get(j);
-                double bx = b.getX();
+                Bullet b = bullets.get(j);// выделяем элемент списка
+                double bx = b.getX();// получаем коорд элемента
                 double by = b.getY();
                 double bw = b.getW();
                 double bh = b.getH();
               //  double dist = Math.sqrt(dx * dx + dy * dy);//расстояние друг от друга//
                 if((bx > ex - bw) && (bx < ex + ew) && (by > ey - bh) && (by < ey + eh))//проверка
                 {
-                    e.hit();
-                    bullets.remove(j);
+                    e.hit();// метод уменьшения здоровья врага
+                    bullets.remove(j); // удаляем пулю из списка
                     j--;                            //проверка на столкновение с пулями
-                    boolean remove_p = e.remove_f();
+                    //Проверка здоровья врага
+                    boolean remove_p = e.remove_f();// пер присваив значение метода пров здоров врага
                     if (remove_p) // если враг повержен
                     {
                         enemies.remove(i);//удаление
@@ -243,7 +243,7 @@ public class gamepanel extends JPanel implements Runnable
         for(int i = 0; i < enemies.size(); i++)//каждого врага из списка
         {
             Enemy e = enemies.get(i);//выделяем элемент
-            double ex = e.getX();
+            double ex = e.getX();// получаем коорд элемента
             double ey = e.getY();
             double ew = e.getW();
             double eh = e.getH();
@@ -271,7 +271,7 @@ public class gamepanel extends JPanel implements Runnable
     }
 
 
-    public void gameRender()
+    public void gameRender()//перерисовка
     {
         //Background draw
         background.draw(g);
@@ -285,27 +285,28 @@ public class gamepanel extends JPanel implements Runnable
 
         //Bullets draw
         for(int i = 0; i < bullets.size(); i++)
-        {
+        { //перерисовка - вызов метода для bullet
             bullets.get(i).draw(g);
         }
         //enemy draw
         for(int i = 0; i < enemies.size(); i++)
         {
-            enemies.get(i).draw(g);
+            enemies.get(i).draw(g);// рисуем текущего врага
         }
 
         //Wave draw
         if(wave.showWave())
         {
-            wave.draw(g);
+            wave.draw(g);// вызов метода перерисовки для волны
         }
 
 
     }
+    //перенос изображения на панель
     private void gameDraw()
     {
-        Graphics g2 = this.getGraphics();
-        g2.drawImage(image,0,0,null);
+        Graphics g2 = this.getGraphics();// переоппред Graphics2d на Graphics
+        g2.drawImage(image,0,0,null);//все что попало в буффер выводится на экран
         g2.dispose();//очищаем буффер
 
     }
