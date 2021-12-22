@@ -1,5 +1,8 @@
 import javax.swing.*;
 import  java.awt.*;
+/**
+ Задний фон игровой панели
+ */
 public class GameBack {
 
     Image img = new ImageIcon("C:/Users/user/IdeaProjects/Game1/res/unnamed.png").getImage();
